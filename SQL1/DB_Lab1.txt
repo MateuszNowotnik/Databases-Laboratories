@@ -1,116 +1,165 @@
 1. Display the name of student identified by id 5
+
 select student_name
 from students
 where student_id=5
 
+
 2. Display the name of subject starting with A
+
 select subject_name
 from subjects
 where subject_name like 'A%'
 
+
 3. Display the names of students who major in COMPUTER CONSTRUCTION
+
 select student_name
 from students s join majors m on s.MAJOR_ID=m.MAJOR_ID
 where MAJOR_NAME='COMPUTER CONSTRUCTION'
 
+
 4. Display in alphabetical order names of females students who got grade greater than 4.5 in any subject
+
 select student_name
 from students s join grades g on s.STUDENT_ID=g.STUDENT_ID
 WHERE GRADE>4.5 and GENDER='F'
 ORDER BY student_name ASC
 
+
 5. Prepare the list of lectures given to COMPUTER CONSTRUCTION students
+
 select subject_name
 from subjects s join subject_types st on s.SUB_TYPE_ID=st.SUB_TYPE_ID
 join majors m on s.MAJOR_ID=m.MAJOR_ID
 WHERE SUB_TYPE_NAME='Lecture'
 
+
 6. Display in reverse alphabetical order the names of men who study MEDICAL ELECTRONICS or COMPUTER SCIENCE
+
 select student_name
 from students s join majors m on s.MAJOR_ID=m.MAJOR_ID
 WHERE GENDER='M' and (MAJOR_NAME='MEDICAL ELECTRONICS' or MAJOR_NAME='COMPUTER SCIENCE') 
 ORDER BY student_name DESC
 
+
 7. Display the names of subjects with at least one grade 5 given. The names mustn't be repeated
+
 select distinct subject_name
 from subjects s join grades g on s.SUBJECT_ID=g.SUBJECT_ID
 where grade=5
 
+
 8. Display the names of subjects with their parent subjects
+
 select s1.subject_name, s2.subject_name
 from subjects s1 join subjects s2 on s1.subject_id=s2.super_sub_id
 
+
 9. Display the number of COMPUTER SCIENCE students.
+
 select distinct count(student_id)
 from students s join majors m on s.major_id=m.major_id
 where major_name='COMPUTER SCIENCE'
 
+
 10. Display an average of grades of student COLLEGE.
+
 select avg(grade)
 from students s join grades g on s.student_id=g.student_id
 where student_name='COLLEGE'
 
+
 11. Display an average of all ELECTRONICS students’
 grades.
+
 select avg(grade)
 from students s join majors m on s.major_id=m.major_id
 join grades g on g.STUDENT_ID=s.student_id
 where major_name='ELECTRONICS'
 
+
 12. Display the lowest and the highest grade got by each
 student.
+
 select student_name, min(grade), max(grade)
 from students s join grades g on s.student_id=g.student_id
 group by s.student_id, student_name
 
+
 13. Display an average of grades for each student.
+
 select student_name, avg(grade)
 from students s join grades g on s.student_id=g.student_id
 group by s.student_id, student_name
 
+
 14. For each major display the dates of birth of the oldest
 students.
+
 select major_name, min(date_of_birth)
 from students s join majors m on s.major_id=m.major_id
 group by m.major_id, major_name
 
+
 15. For each student display the number of grades that he
 or she got in each subject.
+
 select student_name, count(grade)
 from students s join grades g on s.student_id=g.student_id
 join subjects st on st.subject_id=g.subject_id
 group by st.subject_id, subject_name, student_name
 
+
 16. Display the names of subjects which have more than 8 grades given
+
 select subject_name, count(grade) as total_grades
 from subjects s join grades g on s.subject_id=g.SUBJECT_ID
 group by s.subject_id, subject_name
 having count(grade)>8
 
+
 17. For each subject display the number of students who
 got grade in it. Pay attention to getting several grades in
 one subject by some students.
+
 select subject_name, count(distinct student_name)
 from students s join grades g on s.STUDENT_ID=g.student_id
 join subjects st on st.subject_id=g.subject_id
 group by st.subject_id, subject_name
 
+
 18. Display the names of students who are older than student
 WOLF.
+
 select student_name
 from students 
-where date_of_birth<(select date_of_birth from students where student_name='WOLF')
+where date_of_birth < ( 
+select date_of_birth 
+from students where student_name='WOLF' )
+
 
 19. Display the names of students whose average of grades
 is greater than student TROMMEL’s.
+
 select student_name
 from students s join grades g on s.student_id=g.student_id
 group by s.STUDENT_ID, student_name
-having avg(grade)>(select avg(grade) from students s join grades g on s.student_id=g.student_id where student_name='TROMMEL' group by s.student_id, student_name)
+having avg(grade) > ( 
+select avg(grade)
+from students s join grades g on s.student_id=g.student_id 
+where student_name='TROMMEL' 
+group by s.student_id, student_name )
+
 
 20. Display the names of majors having more students
 than ELECTRONICS.
+
 select major_name
 from majors m join students s on m.MAJOR_ID=s.MAJOR_ID
 group by m.major_id, major_name
-having count(student_id)>(select count(student_id) from majors m join students s on m.MAJOR_ID=s.MAJOR_ID group by m.major_id, major_name having major_name='ELECTRONICS')
+having count(student_id) > ( 
+select count(student_id)
+from majors m join students s on m.MAJOR_ID=s.MAJOR_ID
+group by m.major_id, major_name
+having major_name='ELECTRONICS' )
